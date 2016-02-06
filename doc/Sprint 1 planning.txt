@@ -1,0 +1,34 @@
+Directions from RoboMe to smart watch based on the robot's current location & the user's speech input to the smart watch about where the user wants to go
+
+
+Backend process to analyze images to determine (in priority order):
+0.5) REST interface
+1) what each object is
+2) direction to object from robot
+3) distance to object from robot
+
+Robot needs to have:
+1) image controls
+2) pan/tilt/zoom controls for camera
+3) communication with backend
+4) communication with smart watch
+5) robot movement (possibly simulated in some way)
+
+Smart watch:
+1) speech input capability
+2) communication with robot
+
+
+In general:
+Backend handles images processing
+Watch provides GUI
+Robot drives/powers the GUI/watch
+
+
+
+For week of February 7-13:
+-Speech to text
+-Smart watch to phone/phone to smart watch communication
+-Backend REST interface
+-Phone interface to backend REST
+-Java image processing in backend (what each object is)
