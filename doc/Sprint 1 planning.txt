@@ -32,3 +32,11 @@ For week of February 7-13:
 -Backend REST interface
 -Phone interface to backend REST
 -Java image processing in backend (what each object is)
+
+
+Resources:
+Android programming Docs:
+- http://developer.android.com/training/wearables/notifications/creating.html
+
+Image processing Docs:
+- http://www.mathworks.com/help/vision/examples/automatically-detect-and-recognize-text-in-natural-images.html?s_tid=gn_loc_drop
