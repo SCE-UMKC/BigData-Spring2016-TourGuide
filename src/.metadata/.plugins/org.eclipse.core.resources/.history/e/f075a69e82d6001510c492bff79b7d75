@@ -1,0 +1,11 @@
+package ImageId;
+
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfKeyPoint;
+
+public class Image {
+	String imageSrc;
+	Mat imageMat;
+	MatOfKeyPoint imageKP;
+
+}

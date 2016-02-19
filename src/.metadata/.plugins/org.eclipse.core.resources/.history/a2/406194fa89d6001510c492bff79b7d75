@@ -1,0 +1,21 @@
+package ImageId;
+
+import java.util.Vector;
+
+public class IdentifyImage {
+	Vector<Image> imageCompareSet;
+	
+	public IdentifyImage() {
+		this.imageCompareSet = new Vector<Image>();
+		LoadCompareSet();
+	}
+	private void LoadCompareSet() {
+		imageCompareSet.add(new Image("c:\\stick-figure1.jpg", "Stick Person"));
+		/*
+		 * Add lots of images however we decide to do it. Could be by reading a file
+		 * of image locations & descriptions, or pulling the info from a database,
+		 * or just listing a bunch here (for smaller scale tests)
+		 */
+	}
+	
+}

@@ -1,0 +1,39 @@
+package ImageId;
+
+import java.util.ListIterator;
+import java.util.Vector;
+
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
+public class IdentifyImage {
+	private Vector<Image> imageCompareSet;
+	
+	public IdentifyImage() {
+		this.imageCompareSet = new Vector<Image>();
+		LoadCompareSet();
+	}
+	
+	private void LoadCompareSet() {
+		imageCompareSet.add(new Image("c:\\stick-figure1.jpg", "Stick Person"));
+		/*
+		 * Add lots of images however we decide to do it. Could be by reading a file
+		 * of image locations & descriptions, or pulling the info from a database,
+		 * or just listing a bunch here (for smaller scale tests)
+		 */
+	}
+	
+	public void IdImage(Image img) {
+		ListIterator<Image> iter = imageCompareSet.listIterator();
+		float bestMatchRate = (float) 0.0;
+		String bestMatchDesc = "Unknown";
+		while (iter.hasNext()) {
+			Image tmpImage = iter.next();
+			int result_cols = img.getImageCols() - tmpImage.getImageCols() + 1;
+			int result_rows = img.getImageRows() - tmpImage.getImageRows() + 1;
+			Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
+			Imgproc.matchTemplate(img.getImageDescriptor(), tmpImage.getImageDescriptor(), result, Imgproc.TM_CCOEFF_NORMED);
+		}
+	}
+}

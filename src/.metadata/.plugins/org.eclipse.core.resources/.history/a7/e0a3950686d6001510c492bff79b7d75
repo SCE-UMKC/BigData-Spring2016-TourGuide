@@ -1,0 +1,29 @@
+package ImageId;
+
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfKeyPoint;
+
+public class Image {
+	String imageSrc;
+	Mat imageMat;
+	MatOfKeyPoint imageKP;
+	String imageDesc;
+	
+	public Image(String imageSrc) {
+		super();
+		this.imageSrc = imageSrc;
+	}
+	public String getImageSrc() {
+		return imageSrc;
+	}
+	public void setImageSrc(String imageSrc) {
+		this.imageSrc = imageSrc;
+	}
+	public MatOfKeyPoint getImageKP() {
+		return imageKP;
+	}
+	public String getImageDesc() {
+		return imageDesc;
+	}
+
+}
