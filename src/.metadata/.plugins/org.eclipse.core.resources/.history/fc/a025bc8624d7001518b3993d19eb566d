@@ -21,7 +21,7 @@ public class ImageCompare {
 	      
 	      //String img1Location = "c:\\stick-figure1.jpg";
 	      //String img2Location = "c:\\stick-figure2.jpg";
-	      String compareImage = "c:\\chair1.jpg";
+	      String compareImage = "c:\\Get-Direction-Left.png";
 	      
 	      IdentifyImage imageID = new IdentifyImage();
 	      String imageDesc = imageID.IdImage(compareImage);

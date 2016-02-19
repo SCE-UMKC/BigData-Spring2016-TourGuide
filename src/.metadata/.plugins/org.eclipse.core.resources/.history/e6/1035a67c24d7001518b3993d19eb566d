@@ -19,9 +19,9 @@ public class ImageCompare {
 	public static void main(String[] args) {
 	      System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
 	      
-	      //String img1Location = "c:\\stick-figure1.jpg";
-	      //String img2Location = "c:\\stick-figure2.jpg";
-	      String compareImage = "c:\\chair1.jpg";
+	      String img1Location = "c:\\stick-figure1.jpg";
+	      String img2Location = "c:\\stick-figure2.jpg";
+	      String compareImage = "c:\\Get-Direction-Left.png";
 	      
 	      IdentifyImage imageID = new IdentifyImage();
 	      String imageDesc = imageID.IdImage(compareImage);

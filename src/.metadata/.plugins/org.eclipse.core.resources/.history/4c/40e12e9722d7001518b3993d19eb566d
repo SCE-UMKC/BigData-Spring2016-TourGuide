@@ -53,13 +53,7 @@ public class Image {
 	}
 
 	private Mat ReadImage() {
-		if (imageSrc.startsWith("http:")) {
-			//TODO: We have a URL to process
-			//For now just return the imread
-			return Imgcodecs.imread(imageSrc);
-		} else {
-			return Imgcodecs.imread(imageSrc);
-		}
+		return Imgcodecs.imread(imageSrc);
 	}
 	private void DetectKP() {
 		FeatureDetector detector = FeatureDetector.create(featureDetector);

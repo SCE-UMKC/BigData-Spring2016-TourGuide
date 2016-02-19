@@ -19,13 +19,12 @@ public class ImageCompare {
 	public static void main(String[] args) {
 	      System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
 	      
-	      //String img1Location = "c:\\stick-figure1.jpg";
-	      //String img2Location = "c:\\stick-figure2.jpg";
-	      String compareImage = "c:\\chair1.jpg";
+	      String img1Location = "c:\\stick-figure1.jpg";
+	      String img2Location = "c:\\stick-figure2.jpg";
 	      
 	      IdentifyImage imageID = new IdentifyImage();
-	      String imageDesc = imageID.IdImage(compareImage);
-	      System.out.println("Image " + compareImage + " was identified as a " + imageDesc);
+	      String imageDesc = imageID.IdImage(img1Location);
+	      System.out.println("Image " + img1Location + " was identified as a " + imageDesc);
 	      
 	      /*
 	      Mat img1 = Imgcodecs.imread(img1Location);
