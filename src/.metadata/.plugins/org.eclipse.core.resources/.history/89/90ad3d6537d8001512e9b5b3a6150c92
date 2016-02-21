@@ -1,17 +1,5 @@
 package ImageId;
 
-/*
- * This is the basic class for storing images for identification
- * 
- * Usage:
- * Image img1 = new Image("http://www.domain.com/path/to/image.jpg");
- * Image img2 = new Image("/path/to/local/image.png");
- * Image img3 = new Image("c://path/to/local/image.gif", "Description Tag for image");
- * 
- * Upon instantiation, the keypoints and descriptors will be automatically
- * extracted from the image, and saved for future reference
- */
-
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.features2d.DescriptorExtractor;
