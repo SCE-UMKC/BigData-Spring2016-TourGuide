@@ -19,7 +19,7 @@ public class ImageCompare {
 	public static void main(String[] args) {
 	      System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
 	      
-	      String compareImage = "c:\\chair2.jpg";
+	      String compareImage = "c:\\chair1.jpg";
 	      
 	      IdentifyImage imageID = new IdentifyImage();
 	      String imageDesc = imageID.IdImage(compareImage);

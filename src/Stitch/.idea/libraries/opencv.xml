@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="opencv">
+    <CLASSES>
+      <root url="jar://C:/javacpp-presets-bin/opencv.jar!/" />
+      <root url="jar://C:/javacv-bin/opencv.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

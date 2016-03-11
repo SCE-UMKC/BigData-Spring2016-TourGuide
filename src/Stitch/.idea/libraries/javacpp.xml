@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="javacpp">
+    <CLASSES>
+      <root url="jar://C:/javacpp-bin/javacpp.jar!/" />
+      <root url="jar://C:/javacpp-presets-bin/javacpp.jar!/" />
+      <root url="jar://C:/javacv-bin/javacpp.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
