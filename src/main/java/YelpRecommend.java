@@ -50,8 +50,17 @@ public class YelpRecommend {
      */
     public static void main(String[] args) {
         //YelpRecommend yelpApi = new YelpRecommend(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
-        JSONObject results = queryAPI((String) "sweatshirt", 38.952508, -94.719309);
-        System.out.println("Best match business: " + results.toString());
+        String searchItem = "jeans";
+        JSONObject results = queryAPI(searchItem, 38.952508, -94.719309);
+        System.out.println("Best match business for " + searchItem + ": " + results.toString());
+
+        searchItem = "belt";
+        results = queryAPI(searchItem, 39.04229, -94.59155);
+        System.out.println("Best match business for " + searchItem + ": " + results.toString());
+    }
+
+    public YelpRecommend () {
+        this(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
     }
 
     /**
@@ -79,7 +88,7 @@ public class YelpRecommend {
      * @param location <tt>String</tt> of the location
      * @return <tt>String</tt> JSON Response
      */
-    public String searchForBusinessesByLocation(String term, String location) {
+    public org.json.simple.JSONObject searchForBusinessesByLocation(String term, String location) {
         OAuthRequest request = createOAuthRequest(SEARCH_PATH);
         request.addQuerystringParameter("term", term);
         String encodedLoc = location.replaceAll("\\s", "+");
@@ -89,7 +98,14 @@ public class YelpRecommend {
         request.addQuerystringParameter("radius_filter", String.valueOf(RADIUS_FILTER_METERS));
         request.addQuerystringParameter("sort", String.valueOf(SORT_METHOD));
         //System.out.println("searchForBusinessesByLocation: request parameters: " + request.toString());
-        return sendRequestAndGetResponse(request);
+        JSONParser parser = new JSONParser();
+        org.json.simple.JSONObject returnObj = new org.json.simple.JSONObject();
+        try {
+            returnObj = (org.json.simple.JSONObject) parser.parse(sendRequestAndGetResponse(request));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return returnObj;
     }
 
     /**
@@ -141,26 +157,13 @@ public class YelpRecommend {
     private static JSONObject queryAPI(String term, double lat, double lon) {
         YelpRecommend yelpApi = new YelpRecommend(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
         String location = String.valueOf(lat)+","+String.valueOf(lon);
-        String searchResponseJSON =
-                yelpApi.searchForBusinessesByLocation(term, location);
-
-        JSONParser parser = new JSONParser();
-        org.json.simple.JSONObject response = null;
-        try {
-            response = (org.json.simple.JSONObject) parser.parse(searchResponseJSON);
-            //System.out.println("queryAPI: response dump: " + response.toString());
-        } catch (ParseException pe) {
-            System.out.println("queryAPI: Error: could not parse JSON response: " + searchResponseJSON.toString());
-            System.exit(1);
-        }
+        org.json.simple.JSONObject response = yelpApi.searchForBusinessesByLocation(term, location);
 
         org.json.simple.JSONObject region = (org.json.simple.JSONObject) response.get("region");
-        //System.out.println("queryAPI: region dump: " + region.toString());
 
         org.json.simple.JSONArray businesses = new org.json.simple.JSONArray();
         try {
             businesses = (org.json.simple.JSONArray) response.get("businesses");
-            //System.out.println("queryAPI: businesses dump: " + businesses.toString());
         } catch(NullPointerException npe) {
             System.out.println("queryAPI: response dump: " + response.toString());
             System.exit(1);
@@ -173,8 +176,8 @@ public class YelpRecommend {
             firstBusiness = (org.json.simple.JSONObject) businesses.get(0);
             String firstBusinessID = firstBusiness.get("id").toString();
 
-            // Select the first business and display business details
-            String businessResponseJSON = yelpApi.searchByBusinessId(firstBusinessID.toString());
+            // Select the first business and get business details
+            String businessResponseJSON = yelpApi.searchByBusinessId(firstBusinessID);
         } catch (NullPointerException npe) {
             System.out.println("queryAPI: Null pointer found1");
             System.exit(1);
