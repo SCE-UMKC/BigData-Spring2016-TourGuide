@@ -2,6 +2,8 @@
 import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by smoeller on 3/5/2016.
@@ -10,8 +12,13 @@ import java.io.FileNotFoundException;
 public class TourGuide {
     public static void main(String[] args) {
         System.out.println("main: Starting");
-        
-        Stitch myStitcher = new Stitch("IMG_5455.JPG", "IMG_5456.JPG", "c:\\img\\");
+
+        List<String> imgList = new ArrayList<String>();
+        imgList.add("IMG_5480.JPG");
+        imgList.add("IMG_5481.JPG");
+        imgList.add("IMG_5482.JPG");
+        imgList.add("IMG_5483.JPG");
+        Stitch myStitcher = new Stitch(imgList, "c:\\img\\");
         String panoImage = "";
         try {
             panoImage = myStitcher.OutputImage();
