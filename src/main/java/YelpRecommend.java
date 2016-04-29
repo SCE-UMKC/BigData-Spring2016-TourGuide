@@ -88,20 +88,32 @@ public class YelpRecommend {
      * @param location <tt>String</tt> of the location
      * @return <tt>String</tt> JSON Response
      */
-    public org.json.simple.JSONObject searchForBusinessesByLocation(String term, String location) {
+    public JSONObject searchForBusinessesByLocation(String term, String location) {
         OAuthRequest request = createOAuthRequest(SEARCH_PATH);
         request.addQuerystringParameter("term", term);
         String encodedLoc = location.replaceAll("\\s", "+");
-        //request.addQuerystringParameter("location", location);
         request.addQuerystringParameter("ll", location);
         request.addQuerystringParameter("limit", String.valueOf(SEARCH_LIMIT));
         request.addQuerystringParameter("radius_filter", String.valueOf(RADIUS_FILTER_METERS));
         request.addQuerystringParameter("sort", String.valueOf(SORT_METHOD));
-        //System.out.println("searchForBusinessesByLocation: request parameters: " + request.toString());
         JSONParser parser = new JSONParser();
-        org.json.simple.JSONObject returnObj = new org.json.simple.JSONObject();
+        JSONObject returnObj = new JSONObject();
         try {
-            returnObj = (org.json.simple.JSONObject) parser.parse(sendRequestAndGetResponse(request));
+            org.json.simple.JSONObject results = (org.json.simple.JSONObject) parser.parse(sendRequestAndGetResponse(request));
+
+            //now to parse out just the info we care about
+            org.json.simple.JSONArray businesses = (org.json.simple.JSONArray) results.get("businesses");
+            org.json.simple.JSONObject bestBusiness = (org.json.simple.JSONObject) businesses.get(0);
+            org.json.simple.JSONObject coordinate = (org.json.simple.JSONObject) ((org.json.simple.JSONObject) bestBusiness.get("location")).get("coordinate");
+            Double distance = Double.parseDouble(bestBusiness.get("distance").toString());
+            String name = (String) bestBusiness.get("name");
+            Double latitude = Double.parseDouble(coordinate.get("latitude").toString());
+            Double longitude = Double.parseDouble(coordinate.get("longitude").toString());
+
+            returnObj.put("name", name);
+            returnObj.put("distance", distance);
+            returnObj.put("latitude", latitude);
+            returnObj.put("longitude", longitude);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -157,7 +169,7 @@ public class YelpRecommend {
     private static JSONObject queryAPI(String term, double lat, double lon) {
         YelpRecommend yelpApi = new YelpRecommend(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
         String location = String.valueOf(lat)+","+String.valueOf(lon);
-        org.json.simple.JSONObject response = yelpApi.searchForBusinessesByLocation(term, location);
+        JSONObject response = yelpApi.searchForBusinessesByLocation(term, location);
 
         org.json.simple.JSONObject region = (org.json.simple.JSONObject) response.get("region");
 

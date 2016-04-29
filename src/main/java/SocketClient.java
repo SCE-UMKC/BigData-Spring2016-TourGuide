@@ -1,43 +1,19 @@
-import java.io.{PrintStream, IOException}
-import java.net.{Socket, InetAddress}
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
 
-/**
- * Created by Mayanka on 10-Sep-15.
- */
-        object SocketClient {
+class SocketClient {
+    public static void sendToServer(String message) throws IOException {
+        sendToServer(message, "192.168.1.10", 1234);
+    }
 
-        def findIpAdd():String =
-        {
-        val localhost = InetAddress.getLocalHost
-        val localIpAddress = localhost.getHostAddress
-
-        return localIpAddress
-        }
-        def sendCommandToRobot(string: String)
-        {
-        // Simple server
-
-        try {
-
-
-        lazy val address: Array[Byte] = Array(192.toByte, 168.toByte, 1.toByte, 4.toByte)
-        val ia = InetAddress.getByAddress(address)
-        val socket = new Socket(ia, 1234)
-        val out = new PrintStream(socket.getOutputStream)
-        //val in = new DataInputStream(socket.getInputStream())
-
-        out.print(string)
-        out.flush()
-
-        out.close()
-        //in.close()
-        socket.close()
-        }
-        catch {
-        case e: IOException =>
-        e.printStackTrace()
-        }
-        }
-
-
-        }
+    public static void sendToServer(String message, String ip, int port) throws IOException {
+        BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+        Socket clientSocket = new Socket(ip, port);
+        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+        outToServer.writeBytes(message);
+        clientSocket.close();
+    }
+}
