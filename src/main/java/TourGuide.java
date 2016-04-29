@@ -2,6 +2,7 @@
 import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,53 +21,32 @@ public class TourGuide {
         System.out.println("main: Starting");
 
         //Initial setup
-        String workingDir = "c:\\img\\";
-        int standardHeight = 500;
-        Double lat = 39.042349;
-        Double lon = -94.588234;
+        String workingDir = "c:\\img\\"; //location where the image collection can be found
+        int standardHeight = 500; //standard pixel height to normalize all images to
+        Double lat = 39.042349;  //current GPS location
+        Double lon = -94.588234; //current GPS location
+        String searchItem = "ice cream"; //The object to search for
+        YelpRecommend recommender = new YelpRecommend();
 
+
+        System.out.println("Reading in images from " + workingDir);
         File folder = new File(workingDir);
-        File[] listOfFiles = folder.listFiles();
         List<String> imgList = new ArrayList<String>(Arrays.asList(folder.list()));
 
-        //List of images to work on
-        /* List<String> imgList = new ArrayList<String>();
-        imgList.add("IMG_5480.JPG");
-        imgList.add("IMG_5481.JPG");
-        imgList.add("IMG_5482.JPG");
-        imgList.add("IMG_5483.JPG"); */
+        System.out.println("Resizing all images to " + standardHeight + " pixels high");
+        try {
+            ImageResizer.resizeImages(folder, standardHeight);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-
-        //resize the images to a standard size
-        System.out.println("Total No of Files:"+listOfFiles.length);
-        BufferedImage img = null;
-        BufferedImage tempJPG = null;
-        File newFileJPG = null;
-
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                System.out.println("Resizing File " + folder.getPath() + listOfFiles[i].getName());
-                int pos = listOfFiles[i].getName().lastIndexOf(".");
-                try {
-                    img = ImageIO.read(new File(folder.getPath() + "\\" + listOfFiles[i].getName()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                int newWidth = img.getWidth() * standardHeight / img.getHeight();
-                tempJPG = ImageResizer.resizeImage(img, newWidth, standardHeight);
-                newFileJPG = new File(folder.getPath() + "\\" + listOfFiles[i].getName().substring(0,pos)+"_New.jpg");
-                try {
-                    ImageIO.write(tempJPG, "jpg", newFileJPG);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("    Resized to " + newFileJPG);
-            }
+        System.out.println("Updating file list to only include the resized images");
+        for (int i = 0; i < imgList.size(); i++) {
+            imgList.set(i, "New_" + imgList.get(i));
         }
 
 
-
-        //Stitch the images together
+        System.out.println("Stitching all images together into a single panoramic");
         Stitch myStitcher = new Stitch(imgList, workingDir);
         String panoImage = "";
         try {
@@ -74,12 +54,10 @@ public class TourGuide {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        System.out.println("main: Finished stitching, output image: " + panoImage);
+        System.out.println("Finished stitching, output image saved as: " + panoImage);
 
 
-        YelpRecommend recommender = new YelpRecommend();
-
-        String searchItem = "ice cream";
+        System.out.println("Searching for a business near (" + lat.toString()+","+lon.toString() + ") that has " + searchItem);
         JSONObject results = recommender.searchForBusinessesByLocation(searchItem, lat.toString()+","+lon.toString());
         String clientMessage = "Best match business for " + searchItem + ": " + results.get("name") + ", " + results.get("distance") + " meters away at (" + results.get("latitude") + "," + results.get("longitude") + ")";
         System.out.println(clientMessage);
@@ -88,5 +66,8 @@ public class TourGuide {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+        System.out.println("main: End");
     }
 }

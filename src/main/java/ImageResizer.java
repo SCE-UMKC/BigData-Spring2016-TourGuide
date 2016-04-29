@@ -38,6 +38,28 @@ public class ImageResizer {
         System.out.println("DONE");
     }
 
+    public static void resizeImages(File folder, int standardHeight) throws IOException {
+        File[] listOfFiles = folder.listFiles();
+
+        //resize the images to a standard size
+        System.out.println("Total No of Files:"+listOfFiles.length);
+        BufferedImage img = null;
+        BufferedImage tempJPG = null;
+        File newFileJPG = null;
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                System.out.println("Resizing File " + folder.getPath() + listOfFiles[i].getName());
+                img = ImageIO.read(new File(folder.getPath() + "\\" + listOfFiles[i].getName()));
+                int newWidth = img.getWidth() * standardHeight / img.getHeight();
+                tempJPG = ImageResizer.resizeImage(img, newWidth, standardHeight);
+                newFileJPG = new File(folder.getPath() + "\\" + "New_" + listOfFiles[i].getName());
+                ImageIO.write(tempJPG, "jpg", newFileJPG);
+                System.out.println("    Resized to " + newFileJPG);
+            }
+        }
+    }
+
     /**
      * This function resize the image file and returns the BufferedImage object that can be saved to file system.
      */
