@@ -1,6 +1,7 @@
 
 import boofcv.abst.feature.associate.AssociateDescription;
 import boofcv.abst.feature.associate.ScoreAssociation;
+import boofcv.abst.feature.detdesc.ConfigCompleteSift;
 import boofcv.abst.feature.detdesc.DetectDescribePoint;
 import boofcv.abst.feature.detect.interest.ConfigFastHessian;
 import boofcv.alg.descriptor.UtilFeature;
@@ -127,8 +128,7 @@ public class Stitch {
             BufferedImage imageB = (BufferedImage) imageS.get(i);
             ImageFloat32 inputB = ConvertBufferedImage.convertFromSingle(imageB, null, ImageFloat32.class);
 
-            //DetectDescribePoint detDesc = FactoryDetectDescribe.surfStable(new ConfigFastHessian(1, 2, 200, 1, 9, 4, 4), null, null, ImageFloat32.class);
-            DetectDescribePoint detDesc = FactoryDetectDescribe.sift(new ConfigFastHessian(1, 2, 200, 1, 9, 4, 4), null, null, ImageFloat32.class);
+            DetectDescribePoint detDesc = FactoryDetectDescribe.surfStable(new ConfigFastHessian(1, 2, 200, 1, 9, 4, 4), null, null, ImageFloat32.class);
             ScoreAssociation<BrightFeature> scorer = FactoryAssociation.scoreEuclidean(BrightFeature.class, true);
             AssociateDescription<BrightFeature> associate = FactoryAssociation.greedy(scorer,2,true);
 
@@ -141,6 +141,8 @@ public class Stitch {
             WriteImage(imageA, imageB, H, tmpImgName);
             middleImages.add(tmpImgName);
             System.out.println("Created new merged image " + tmpImgName);
+            imageA = imageB;
+            inputA = inputB;
         }
         return middleImages;
     }
