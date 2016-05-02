@@ -212,7 +212,8 @@ public class Stitch {
 
     private static void WriteImage(BufferedImage imageA, BufferedImage imageB, Homography2D_F64 fromAtoB, String outputImg) {
         // specify size of output image
-        double scale = 0.5;
+        //double scale = 0.5;
+        double scale = 1.0;
 
         // Convert into a BoofCV color format
         MultiSpectral<ImageFloat32> colorA = ConvertBufferedImage.convertFromMulti(imageA, null, true, ImageFloat32.class);
@@ -220,9 +221,11 @@ public class Stitch {
 
         // Where the output images are rendered into
         MultiSpectral<ImageFloat32> work = colorA.createSameShape();
+        work.reshape(2 * work.getWidth(), 2 * work.getHeight());
 
         // Adjust the transform so that the whole image can appear inside of it
-        Homography2D_F64 fromAToWork = new Homography2D_F64(scale, 0, colorA.width/4, 0, scale, colorA.height/4, 0, 0, 1);
+        //Homography2D_F64 fromAToWork = new Homography2D_F64(scale, 0, colorA.width/4, 0, scale, colorA.height/4, 0, 0, 1);
+        Homography2D_F64 fromAToWork = new Homography2D_F64(scale, 0, colorA.width/2, 0, scale, colorA.height/2, 0, 0, 1);
         Homography2D_F64 fromWorkToA = fromAToWork.invert(null);
 
         // Used to render the results onto an image
@@ -242,6 +245,11 @@ public class Stitch {
 
         // Convert the rendered image into a BufferedImage
         BufferedImage output = new BufferedImage(work.width, work.height, imageA.getType());
+
+        Graphics2D ig2 = output.createGraphics();
+        ig2.setBackground(Color.WHITE);
+        ig2.clearRect(0, 0, output.getWidth(), output.getHeight());
+        ig2.dispose();
 
         ConvertBufferedImage.convertTo(work,output,true);
 

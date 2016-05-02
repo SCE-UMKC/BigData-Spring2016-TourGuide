@@ -26,6 +26,8 @@ public class TourGuide {
         Double lat = 39.042349;  //current GPS location
         Double lon = -94.588234; //current GPS location
         String searchItem = "ice cream"; //The object to search for
+
+
         YelpRecommend recommender = new YelpRecommend();
 
 
@@ -56,7 +58,7 @@ public class TourGuide {
         }
         System.out.println("Finished stitching, output image saved as: " + panoImage);
 
-
+        /*
         System.out.println("Searching for a business near (" + lat.toString()+","+lon.toString() + ") that has " + searchItem);
         JSONObject results = recommender.searchForBusinessesByLocation(searchItem, lat.toString()+","+lon.toString());
         String clientMessage = "Best match business for " + searchItem + ": " + results.get("name") + ", " + results.get("distance") + " meters away at (" + results.get("latitude") + "," + results.get("longitude") + ")";
@@ -66,7 +68,7 @@ public class TourGuide {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+        */
 
 
         System.out.println("main: End");
