@@ -58,6 +58,10 @@ public class IdentifyImage {
                 System.out.println("Found a new best match: " + bestMatchDesc + " (" + bestMatchRate + ")");
             }
         }
+        if (bestMatchRate < 0.50) {
+            //We must have at least a 50% confidence in the match, or not worth noting
+            bestMatchDesc = "";
+        }
         return bestMatchDesc;
     }
 }

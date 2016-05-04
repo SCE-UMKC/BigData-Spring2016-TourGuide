@@ -24,6 +24,8 @@ public class TourGuide {
 
 
     public static void main(String[] args) {
+        System.setProperty("java.library.path", "C:\\opencv\\build\\java");
+
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
         System.out.println("main: Starting");
@@ -34,6 +36,7 @@ public class TourGuide {
         Double lat = 39.042349;  //current GPS location
         Double lon = -94.588234; //current GPS location
         String searchItem = "ice cream"; //The object to search for
+        String androidIP = "10.126.0.159"; //IP of the Android device to talk to
 
 
         YelpRecommend recommender = new YelpRecommend();
@@ -110,12 +113,12 @@ public class TourGuide {
             } else if (result.contains((CharSequence) results.get("name"))) {
                 clientMessage = "Found the best match, " + results.get("name") + " in the image text";
             } else {
-                clientMessage = "Best match business for " + searchItem + ": " + results.get("name") + ", " + results.get("distance") + " meters away at (" + results.get("latitude") + "," + results.get("longitude") + ")";
+                clientMessage = "Best match business for " + searchItem + ": " + results.get("name") + ", " + results.get("distance") + " meters away at (" + results.get("latitude") + "," + results.get("longitude") + "), was not found in the images";
             }
             System.out.println(clientMessage);
 
             try {
-                SocketClient.sendToServer(clientMessage + "\n", "10.205.0.107", 1234);
+                SocketClient.sendToServer(clientMessage + "\n", androidIP, 1234);
             } catch (IOException e) {
                 e.printStackTrace();
             }
