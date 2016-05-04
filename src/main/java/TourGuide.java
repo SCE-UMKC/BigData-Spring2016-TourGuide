@@ -1,4 +1,6 @@
 
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
 import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
@@ -17,6 +19,9 @@ import java.util.List;
  */
 
 public class TourGuide {
+    private static String tessdataDir = "C:\\Users\\smoeller\\Documents\\MSCS\\CS5542\\BigData-Spring2016-TourGuide\\BigData-Spring2016-TourGuide";
+
+
     public static void main(String[] args) {
         System.out.println("main: Starting");
 
@@ -58,13 +63,43 @@ public class TourGuide {
         }
         System.out.println("Finished stitching, output image saved as: " + panoImage);
 
-        /*
+
+
+        //Attempt to detect objects in the image
+        IdentifyImage imageID = new IdentifyImage();
+        String imageDesc = imageID.IdImage(panoImage);
+        System.out.println("Image " + panoImage + " was identified as a " + imageDesc);
+
+
+
+        //Now to detect any text in the combined image
+        File imageFile = new File(panoImage);
+        Tesseract instance = new Tesseract(); //
+        BufferedImage bufferedImage = null;
+        try {
+            bufferedImage = ImageIO.read(imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        instance.setDatapath(tessdataDir);
+        try {
+            String result = instance.doOCR(bufferedImage);
+            System.out.println("OCR found: " + result);
+
+        } catch (TesseractException e) {
+            System.err.println(e.getMessage());
+        }
+
+
+
+
         System.out.println("Searching for a business near (" + lat.toString()+","+lon.toString() + ") that has " + searchItem);
         JSONObject results = recommender.searchForBusinessesByLocation(searchItem, lat.toString()+","+lon.toString());
         String clientMessage = "Best match business for " + searchItem + ": " + results.get("name") + ", " + results.get("distance") + " meters away at (" + results.get("latitude") + "," + results.get("longitude") + ")";
         System.out.println(clientMessage);
+        /*
         try {
-            SocketClient.sendToServer(clientMessage + "\n", "10.151.3.35", 1234);
+            SocketClient.sendToServer(clientMessage + "\n", "10.205.0.107", 1234);
         } catch (IOException e) {
             e.printStackTrace();
         }
