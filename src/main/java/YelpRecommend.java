@@ -92,7 +92,7 @@ public class YelpRecommend {
         OAuthRequest request = createOAuthRequest(SEARCH_PATH);
         request.addQuerystringParameter("term", term);
         String encodedLoc = location.replaceAll("\\s", "+");
-        request.addQuerystringParameter("ll", location);
+        request.addQuerystringParameter("ll", encodedLoc);
         request.addQuerystringParameter("limit", String.valueOf(SEARCH_LIMIT));
         request.addQuerystringParameter("radius_filter", String.valueOf(RADIUS_FILTER_METERS));
         request.addQuerystringParameter("sort", String.valueOf(SORT_METHOD));
