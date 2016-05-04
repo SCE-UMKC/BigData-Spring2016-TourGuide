@@ -2,6 +2,7 @@
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.json.JSONObject;
+import org.opencv.core.Core;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -23,6 +24,8 @@ public class TourGuide {
 
 
     public static void main(String[] args) {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
         System.out.println("main: Starting");
 
         //Initial setup
@@ -82,8 +85,9 @@ public class TourGuide {
             e.printStackTrace();
         }
         instance.setDatapath(tessdataDir);
+        String result = "";
         try {
-            String result = instance.doOCR(bufferedImage);
+            result = instance.doOCR(bufferedImage);
             System.out.println("OCR found: " + result);
 
         } catch (TesseractException e) {
@@ -92,18 +96,31 @@ public class TourGuide {
 
 
 
+        if (imageDesc.contains(searchItem)) {
+            System.out.println("We have found " + searchItem + " in the image objects");
+        } else if (result.contains(searchItem)) {
+            System.out.println("We have found " + searchItem + " in the image text");
+        } else {
 
-        System.out.println("Searching for a business near (" + lat.toString()+","+lon.toString() + ") that has " + searchItem);
-        JSONObject results = recommender.searchForBusinessesByLocation(searchItem, lat.toString()+","+lon.toString());
-        String clientMessage = "Best match business for " + searchItem + ": " + results.get("name") + ", " + results.get("distance") + " meters away at (" + results.get("latitude") + "," + results.get("longitude") + ")";
-        System.out.println(clientMessage);
-        /*
-        try {
-            SocketClient.sendToServer(clientMessage + "\n", "10.205.0.107", 1234);
-        } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Searching for a business near (" + lat.toString() + "," + lon.toString() + ") that has " + searchItem);
+            JSONObject results = recommender.searchForBusinessesByLocation(searchItem, lat.toString() + "," + lon.toString());
+            String clientMessage = "We were unable to find " + searchItem + " nearby";
+            if (imageDesc.contains((CharSequence) results.get("name"))) {
+                clientMessage = "Found the best match, " + results.get("name") + " in the images taken";
+            } else if (result.contains((CharSequence) results.get("name"))) {
+                clientMessage = "Found the best match, " + results.get("name") + " in the image text";
+            } else {
+                clientMessage = "Best match business for " + searchItem + ": " + results.get("name") + ", " + results.get("distance") + " meters away at (" + results.get("latitude") + "," + results.get("longitude") + ")";
+            }
+            System.out.println(clientMessage);
+
+            try {
+                SocketClient.sendToServer(clientMessage + "\n", "10.205.0.107", 1234);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        */
+
 
 
         System.out.println("main: End");

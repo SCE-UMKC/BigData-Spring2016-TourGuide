@@ -65,27 +65,6 @@ public class ImageResizer {
      */
     public static BufferedImage resizeImage(final Image image, int width, int height) {
 
-      /**  int targetw = 0;
-        int targeth = 75;
-
-        if (width > height)targetw = 112;
-        else targetw = 50;
-
-        do {
-            if (width > targetw) {
-                width /= 2;
-                if (width < targetw) width = targetw;
-            }
-
-            if (height > targeth) {
-                height /= 2;
-                if (height < targeth) height = targeth;
-            }
-        } while (width != targetw || height != targeth);**/
-
-        //width = 500;
-        //height = 500;
-
         final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         final Graphics2D graphics2D = bufferedImage.createGraphics();
         graphics2D.setComposite(AlphaComposite.Src);
