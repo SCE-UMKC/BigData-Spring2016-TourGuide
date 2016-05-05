@@ -49,7 +49,7 @@ public class ImageResizer {
 
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
-                System.out.println("Resizing File " + folder.getPath() + listOfFiles[i].getName());
+                System.out.println("Resizing File " + folder.getPath() + "\\" + listOfFiles[i].getName());
                 img = ImageIO.read(new File(folder.getPath() + "\\" + listOfFiles[i].getName()));
                 int newWidth = img.getWidth() * standardHeight / img.getHeight();
                 tempJPG = ImageResizer.resizeImage(img, newWidth, standardHeight);

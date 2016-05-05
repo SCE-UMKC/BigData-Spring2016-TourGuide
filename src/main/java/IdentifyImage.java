@@ -15,12 +15,17 @@ public class IdentifyImage {
     }
 
     private void LoadCompareSet() {
-        imageCompareSet.add(new Image("c:\\stick-figure1.jpg", "Tall Stick Person"));
-        imageCompareSet.add(new Image("c:\\stick-figure2.jpg", "Wide Stick Person"));
-        imageCompareSet.add(new Image("c:\\Get-Direction-Left.png", "Left directions"));
-        imageCompareSet.add(new Image("c:\\Get-Direction-Right.png", "Right directions"));
-        imageCompareSet.add(new Image("c:\\chair1.jpg", "Wooden chair"));
-        imageCompareSet.add(new Image("c:\\chair2.jpg", "Folding chair"));
+        String directory = "C:\\Users\\smoeller\\Documents\\MSCS\\CS5542\\BigData-Spring2016-TourGuide\\BigData-Spring2016-TourGuide\\data";
+        imageCompareSet.add(new Image(directory + "\\stick-figure1.jpg", "Tall Stick Person"));
+        imageCompareSet.add(new Image(directory + "\\stick-figure2.jpg", "Wide Stick Person"));
+        imageCompareSet.add(new Image(directory + "\\Get-Direction-Left.png", "Left directions"));
+        imageCompareSet.add(new Image(directory + "\\Get-Direction-Right.png", "Right directions"));
+        imageCompareSet.add(new Image(directory + "\\chair1.jpg", "Wooden chair"));
+        imageCompareSet.add(new Image(directory + "\\chair2.jpg", "Folding chair"));
+        imageCompareSet.add(new Image(directory + "\\foldingchair1.jpg", "Folding chair"));
+        imageCompareSet.add(new Image(directory + "\\gap1.jpg", "Gap"));
+        imageCompareSet.add(new Image(directory + "\\buckle1.jpg", "Buckle"));
+        imageCompareSet.add(new Image(directory + "\\forever211.png", "Forever 21"));
 		/*
 		 * Add lots of images however we decide to do it. Could be by reading a file
 		 * of image locations & descriptions, or pulling the info from a database,
@@ -55,7 +60,7 @@ public class IdentifyImage {
                 //Found a new best batch to record
                 bestMatchRate = thisMatchRate;
                 bestMatchDesc = tmpImg.getImageDesc();
-                System.out.println("Found a new best match: " + bestMatchDesc + " (" + bestMatchRate + ")");
+                //System.out.println("Found a new best match: " + bestMatchDesc + " (" + bestMatchRate + ")");
             }
         }
         if (bestMatchRate < 0.50) {

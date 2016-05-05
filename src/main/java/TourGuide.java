@@ -35,7 +35,7 @@ public class TourGuide {
         int standardHeight = 500; //standard pixel height to normalize all images to
         Double lat = 39.042349;  //current GPS location
         Double lon = -94.588234; //current GPS location
-        String searchItem = "ice cream"; //The object to search for
+        String searchItem = "jeans"; //The object to search for
         String androidIP = "10.126.0.159"; //IP of the Android device to talk to
 
 
@@ -107,7 +107,7 @@ public class TourGuide {
 
             System.out.println("Searching for a business near (" + lat.toString() + "," + lon.toString() + ") that has " + searchItem);
             JSONObject results = recommender.searchForBusinessesByLocation(searchItem, lat.toString() + "," + lon.toString());
-            String clientMessage = "We were unable to find " + searchItem + " nearby";
+            String clientMessage = "";
             if (imageDesc.contains((CharSequence) results.get("name"))) {
                 clientMessage = "Found the best match, " + results.get("name") + " in the images taken";
             } else if (result.contains((CharSequence) results.get("name"))) {
