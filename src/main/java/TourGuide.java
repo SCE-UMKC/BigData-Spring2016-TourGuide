@@ -33,10 +33,10 @@ public class TourGuide {
         //Initial setup
         String workingDir = "c:\\img\\"; //location where the image collection can be found
         int standardHeight = 500; //standard pixel height to normalize all images to
-        Double lat = 39.042349;  //current GPS location
-        Double lon = -94.588234; //current GPS location
-        String searchItem = "jeans"; //The object to search for
-        String androidIP = "10.126.0.159"; //IP of the Android device to talk to
+        Double lat = 39.033515;  //current GPS location
+        Double lon = -94.576402; //current GPS location
+        String searchItem = "coffee"; //The object to search for
+        String androidIP = "10.126.0.85"; //IP of the Android device to talk to
 
 
         YelpRecommend recommender = new YelpRecommend();
@@ -119,6 +119,7 @@ public class TourGuide {
 
             try {
                 SocketClient.sendToServer(clientMessage + "\n", androidIP, 1234);
+                System.out.println("Sent message to user's device");
             } catch (IOException e) {
                 e.printStackTrace();
             }

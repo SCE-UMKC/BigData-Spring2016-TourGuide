@@ -2,14 +2,8 @@
   * Created by pradyumnad on 10/07/15.
   */
 
-import java.awt.image.BufferedImage
-import java.io.{FileNotFoundException, IOException, File}
 import java.nio.file.{Files, Paths}
-import java.util.Arrays
-import javax.imageio.ImageIO
-import scala.collection.JavaConversions._
 
-import net.sourceforge.tess4j.{TesseractException, Tesseract}
 import org.apache.spark.mllib.clustering.{KMeans, KMeansModel}
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
@@ -19,15 +13,13 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.bytedeco.javacpp.opencv_highgui._
-import org.json.JSONObject
-import org.opencv.core.Core
 
 import scala.collection.mutable
 
 object IPApp {
   val featureVectorsCluster = new mutable.MutableList[String]
 
-  val IMAGE_CATEGORIES = List("rice", "tempura", "toast", "bibimap", "sushi", "spaghetti", "sausage", "oden", "omelet", "jiaozi")
+  val IMAGE_CATEGORIES = List("Exit", "Stop")
   //val IMAGE_CATEGORIES = List("accordion", "airplanes", "anchor", "ant", "barrel", "bass", "beaver", "binocular", "bonsai")
 
   /**
@@ -103,6 +95,7 @@ object IPApp {
 
         val segments = name.split("/")
         val cat = segments(segments.length - 2)
+        println(categories.value.indexOf(cat))
         List(categories.value.indexOf(cat) + "," + list(0))
       }
     }.reduce((x, y) => x ::: y)
@@ -124,6 +117,7 @@ object IPApp {
       val parts = line.split(',')
       LabeledPoint(parts(0).toDouble, Vectors.dense(parts(1).split(' ').map(_.toDouble)))
     }
+    parsedData.foreach(f=>println(f))
 
     // Split data into training (70%) and test (30%).
     val splits = parsedData.randomSplit(Array(0.7, 0.3), seed = 11L)
@@ -132,7 +126,7 @@ object IPApp {
 
     // Train a RandomForest model.
     //  Empty categoricalFeaturesInfo indicates all features are continuous.
-    val numClasses = 10
+    val numClasses = 2
     val categoricalFeaturesInfo = Map[Int, Int]()
     //    val numTrees = 10 // Use more in practice.
     //    val featureSubsetStrategy = "auto" // Let the algorithm choose.
@@ -214,11 +208,12 @@ object IPApp {
     val model = KMeansModel.load(sc, IPSettings.KMEANS_PATH)
     val vocabulary = ImageUtils.vectorsToMat(model.clusterCenters)
 
-    val path = "files/101_ObjectCategories/ant/image_0012.jpg"
+    // val path = "files/101_ObjectCategories/ant/image_0012.jpg"
+    val path = "sign_data/train/Exit_Translucent/Exit_020.jpg"
     val desc = ImageUtils.bowDescriptors(path, vocabulary)
 
     val testImageMat = imread(path)
-    imshow("Test Image", testImageMat)
+    //imshow("Test Image", testImageMat)
 
     val histogram = ImageUtils.matToVector(desc)
 
@@ -295,173 +290,42 @@ object IPApp {
       */
     generateRandomForestModel(sc)
 
-    //    testImageClassification(sc)
-
-    val testImages = sc.wholeTextFiles(s"${IPSettings.TEST_INPUT_DIR}/*/*.jpg")
-    val testImagesArray = testImages.collect()
-    var predictionLabels = List[String]()
-    testImagesArray.foreach(f => {
-      println("Test image: " + f._1)
-      val splitStr = f._1.split("file:/")
-      val predictedClass: Double = classifyImage(sc, splitStr(1))
-      val segments = f._1.split("/")
-      val cat = segments(segments.length - 2)
-      val GivenClass = IMAGE_CATEGORIES.indexOf(cat)
-      println(s"Predicting test image : " + cat + " as " + IMAGE_CATEGORIES(predictedClass.toInt))
-      predictionLabels = predictedClass + ";" + GivenClass :: predictionLabels
-    })
-
-    val pLArray = predictionLabels.toArray
-
-    predictionLabels.foreach(f => {
-      val ff = f.split(";")
-      println("Prediction labels: " + ff(0), ff(1))
-    })
-    val predictionLabelsRDD = sc.parallelize(pLArray)
-
-
-    val pRDD = predictionLabelsRDD.map(f => {
-      val ff = f.split(";")
-      (ff(0).toDouble, ff(1).toDouble)
-    })
-    val accuracy = 1.0 * pRDD.filter(x => x._1 == x._2).count() / testImages.count
-
-    println("Accuracy: " + accuracy)
-    ModelEvaluation.evaluateModel(pRDD)
-
-
-
-
-
-    val tessdataDir = "C:\\Users\\smoeller\\Documents\\MSCS\\CS5542\\BigData-Spring2016-TourGuide\\BigData-Spring2016-TourGuide"
-    System.setProperty("java.library.path", "C:\\opencv\\build\\java")
-    System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
-
-    System.out.println("main: Finished training, now to analyze the data we received")
-
-    //Initial setup
-    val workingDir: String = "c:\\img\\"
-    val standardHeight: Int = 500
-    val lat: Double = 39.042349
-    val lon: Double = -94.588234
-    val searchItem: String = "jeans"
-    val androidIP: String = "10.126.0.159"
-
-
-    val recommender: YelpRecommend = new YelpRecommend
-
-/*
-    System.out.println("Reading in images from " + workingDir)
-    val folder: File = new File(workingDir)
-    val imgList: java.util.List = new java.util.ArrayList(Arrays.asList(folder.list))
-
-    System.out.println("Resizing all images to " + standardHeight + " pixels high")
-    try {
-      ImageResizer.resizeImages(folder, standardHeight)
-    }
-    catch {
-      case e: IOException => {
-        e.printStackTrace
-      }
-    }
-
-
-    System.out.println("Updating file list to only include the resized images")
-    {
-      var i: Int = 0
-      while (i < imgList.size) {
-        {
-          val newImgName = "New_" + imgList.get(i)
-          imgList.set(i, newImgName)
-        }
-        ({
-          i += 1; i - 1
-        })
-      }
-    }
-
-
-
-    System.out.println("Stitching all images together into a single panoramic")
-    val myStitcher: Stitch = new Stitch(imgList, workingDir)
-    var panoImage: String = ""
-    try {
-      panoImage = myStitcher.OutputImage
-    }
-    catch {
-      case e: FileNotFoundException => {
-        e.printStackTrace
-      }
-    }
-    System.out.println("Finished stitching, output image saved as: " + panoImage)
-
-
-
-    //Attempt to detect objects in the image
-    val imageID: IdentifyImage = new IdentifyImage
-    val imageDesc: String = imageID.IdImage(panoImage)
-    System.out.println("Image " + panoImage + " was identified as a " + imageDesc)
-
-
-
-    //Now to detect any text in the combined image
-    val imageFile: File = new File(panoImage)
-    val instance: Tesseract = new Tesseract
-    var bufferedImage: BufferedImage = null
-    try {
-      bufferedImage = ImageIO.read(imageFile)
-    }
-    catch {
-      case e: IOException => {
-        e.printStackTrace
-      }
-    }
-    instance.setDatapath(tessdataDir)
-    var result: String = ""
-    try {
-      result = instance.doOCR(bufferedImage)
-      System.out.println("OCR found: " + result)
-    }
-    catch {
-      case e: TesseractException => {
-        System.err.println(e.getMessage)
-      }
-    }
-
-
-
-    if (imageDesc.contains(searchItem)) {
-      System.out.println("We have found " + searchItem + " in the image objects")
-    }
-    else if (result.contains(searchItem)) {
-      System.out.println("We have found " + searchItem + " in the image text")
-    }
-    else {
-      System.out.println("Searching for a business near (" + lat.toString + "," + lon.toString + ") that has " + searchItem)
-      val results: JSONObject = recommender.searchForBusinessesByLocation(searchItem, lat.toString + "," + lon.toString)
-      var clientMessage: String = ""
-      if (imageDesc.contains(results.get("name").asInstanceOf[CharSequence])) {
-        clientMessage = "Found the best match, " + results.get("name") + " in the images taken"
-      }
-      else if (result.contains(results.get("name").asInstanceOf[CharSequence])) {
-        clientMessage = "Found the best match, " + results.get("name") + " in the image text"
-      }
-      else {
-        clientMessage = "Best match business for " + searchItem + ": " + results.get("name") + ", " + results.get("distance") + " meters away at (" + results.get("latitude") + "," + results.get("longitude") + "), was not found in the images"
-      }
-      System.out.println(clientMessage)
-      try {
-        SocketClient.sendToServer(clientMessage + "\n", androidIP, 1234)
-      }
-      catch {
-        case e: IOException => {
-          e.printStackTrace
-        }
-      }
-    }
-*/
-
-
-    System.out.println("main: End")
+    testImageClassification(sc)
   }
 }
+
+//    val testImages = sc.wholeTextFiles(s"${IPSettings.TEST_INPUT_DIR}/*/*.jpg")
+//    val testImagesArray = testImages.collect()
+//    var predictionLabels = List[String]()
+//    testImagesArray.foreach(f => {
+//      println(f._1)
+//      val splitStr = f._1.split("file:/")
+//      val predictedClass: Double = classifyImage(sc, splitStr(1))
+//      val segments = f._1.split("/")
+//      val cat = segments(segments.length - 2)
+//      val GivenClass = IMAGE_CATEGORIES.indexOf(cat)
+//      println(s"Predicting test image : " + cat + " as " + IMAGE_CATEGORIES(predictedClass.toInt))
+//      predictionLabels = predictedClass + ";" + GivenClass :: predictionLabels
+//    })
+//
+//    val pLArray = predictionLabels.toArray
+//
+//    predictionLabels.foreach(f => {
+//      val ff = f.split(";")
+//      println(ff(0), ff(1))
+//    })
+//    val predictionLabelsRDD = sc.parallelize(pLArray)
+//
+//
+//    val pRDD = predictionLabelsRDD.map(f => {
+//      val ff = f.split(";")
+//      (ff(0).toDouble, ff(1).toDouble)
+//    })
+//    val accuracy = 1.0 * pRDD.filter(x => x._1 == x._2).count() / testImages.count
+//
+//    println(accuracy)
+//    ModelEvaluation.evaluateModel(pRDD)
+//
+//
+//  }
+//}
