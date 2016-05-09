@@ -32,9 +32,9 @@ public class TourGuide {
 
         //Initial setup
         String workingDir = "c:\\img\\"; //location where the image collection can be found
-        int standardHeight = 500; //standard pixel height to normalize all images to
-        Double lat = 39.033515;  //current GPS location
-        Double lon = -94.576402; //current GPS location
+        int standardHeight = 1600; //standard pixel height to normalize all images to
+        Double lat = 39.042416;  //current GPS location
+        Double lon = -94.590844; //current GPS location
         String searchItem = "coffee"; //The object to search for
         String androidIP = "10.126.0.85"; //IP of the Android device to talk to
 
@@ -59,7 +59,7 @@ public class TourGuide {
         }
 
 
-        System.out.println("Stitching all images together into a single panoramic");
+        System.out.println(System.nanoTime() + " Stitching all images together into a single panoramic");
         Stitch myStitcher = new Stitch(imgList, workingDir);
         String panoImage = "";
         try {
@@ -67,7 +67,7 @@ public class TourGuide {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        System.out.println("Finished stitching, output image saved as: " + panoImage);
+        System.out.println(System.nanoTime() + " Finished stitching, output image saved as: " + panoImage);
 
 
 
