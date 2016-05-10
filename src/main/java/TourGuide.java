@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -22,6 +23,40 @@ import java.util.List;
 public class TourGuide {
     private static String tessdataDir = "C:\\Users\\smoeller\\Documents\\MSCS\\CS5542\\BigData-Spring2016-TourGuide\\BigData-Spring2016-TourGuide";
 
+    private static void TesseractSuccess(String testingDir) {
+        Integer success = 0;
+        Integer failure = 0;
+        File folder = new File("sign_boards/train/" + testingDir);
+        List<String> imgList = new ArrayList<String>(Arrays.asList(folder.list()));
+        Iterator imgItr = imgList.iterator();
+        while (imgItr.hasNext()) {
+            String fileName = (String) imgItr.next();
+            //System.out.println("Processing " + "sign_boards\\train\\" + testingDir + "\\" + fileName);
+            File imageFile = new File("sign_boards\\train\\" + testingDir + "\\" + fileName);
+            Tesseract instance = new Tesseract(); //
+            BufferedImage bufferedImage = null;
+            try {
+                bufferedImage = ImageIO.read(imageFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            instance.setDatapath(tessdataDir);
+            String result = "";
+            try {
+                result = instance.doOCR(bufferedImage);
+                if (result.toLowerCase().contains(testingDir.toLowerCase())) {
+                    System.out.println("OCR Success Results for '" + testingDir + "': " + fileName + ": " + result);
+                    success++;
+                } else {
+                    System.out.println("OCR Fail Results for '" + testingDir + "': " + fileName + ": " + result);
+                    failure++;
+                }
+            } catch (TesseractException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+        System.out.println("********Success for " + testingDir + ": " + success + "/" + failure + "\n\n");
+    }
 
     public static void main(String[] args) {
         System.setProperty("java.library.path", "C:\\opencv\\build\\java");
@@ -30,13 +65,17 @@ public class TourGuide {
 
         System.out.println("main: Starting");
 
+        TesseractSuccess("Exit");
+        TesseractSuccess("Stop");
+        System.exit(0);
+
         //Initial setup
         String workingDir = "c:\\img\\"; //location where the image collection can be found
-        int standardHeight = 1600; //standard pixel height to normalize all images to
+        int standardHeight = 400; //standard pixel height to normalize all images to
         Double lat = 39.042416;  //current GPS location
         Double lon = -94.590844; //current GPS location
         String searchItem = "coffee"; //The object to search for
-        String androidIP = "10.126.0.85"; //IP of the Android device to talk to
+        String androidIP = "192.168.1.7"; //IP of the Android device to talk to
 
 
         YelpRecommend recommender = new YelpRecommend();
@@ -119,7 +158,7 @@ public class TourGuide {
 
             try {
                 SocketClient.sendToServer(clientMessage + "\n", androidIP, 1234);
-                System.out.println("Sent message to user's device");
+                System.out.println("Sent message to user's device at " + androidIP + ":1234 : \"" + clientMessage + "\"");
             } catch (IOException e) {
                 e.printStackTrace();
             }
