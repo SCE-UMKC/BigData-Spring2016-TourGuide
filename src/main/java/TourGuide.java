@@ -65,9 +65,9 @@ public class TourGuide {
 
         System.out.println("main: Starting");
 
-        TesseractSuccess("Exit");
-        TesseractSuccess("Stop");
-        System.exit(0);
+        //TesseractSuccess("Exit");
+        //TesseractSuccess("Stop");
+        //System.exit(0);
 
         //Initial setup
         String workingDir = "c:\\img\\"; //location where the image collection can be found
